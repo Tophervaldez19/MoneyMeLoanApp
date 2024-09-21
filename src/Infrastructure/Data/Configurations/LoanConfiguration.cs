@@ -21,5 +21,7 @@ public class LoanConfiguration : IEntityTypeConfiguration<Loan>
             .WithMany(x => x.Loans)
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Property(x => x.Amount).HasPrecision(38, 4);
     }
 }
