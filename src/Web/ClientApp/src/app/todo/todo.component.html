@@ -53,7 +53,7 @@
               </div>
             </div>
             <div class="todo-item-commands">
-              <button *ngIf="item.id != 0" (click)="showItemDetailsModal(itemDetailsModalTemplate, item)"
+              <button *ngIf="item.id != ''" (click)="showItemDetailsModal(itemDetailsModalTemplate, item)"
                 class="btn btn-default btn-xs" role="button">
                 <i class="bi bi-three-dots-vertical"></i>
               </button>

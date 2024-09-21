@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MoneyMeLoan.Domain.Entities;
-public class Product
+public class Product : BaseAuditableEntity
 {
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
