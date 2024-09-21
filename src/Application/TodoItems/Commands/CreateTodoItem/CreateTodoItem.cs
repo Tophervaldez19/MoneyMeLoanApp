@@ -6,7 +6,7 @@ namespace MoneyMeLoan.Application.TodoItems.Commands.CreateTodoItem;
 
 public record CreateTodoItemCommand : IRequest<Guid>
 {
-    public int ListId { get; init; }
+    public Guid ListId { get; init; }
 
     public string? Title { get; init; }
 }

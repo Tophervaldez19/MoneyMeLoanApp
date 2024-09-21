@@ -13,4 +13,6 @@ public class Customer : BaseAuditableEntity
     public DateOnly DateOfBirth { get; set; }
     public string MobilePhone { get; set; } = string.Empty;
     public string EmailAddress { get; set; } = string.Empty;
+
+    public IList<Loan> Loans { get; private set; } = new List<Loan>();
 }
