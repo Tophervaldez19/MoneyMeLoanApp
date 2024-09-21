@@ -7,5 +7,10 @@ using System.Threading.Tasks;
 namespace MoneyMeLoan.Domain.Entities;
 public class Customer : BaseAuditableEntity
 {
-    public 
+    public string Title { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public DateOnly DateOfBirth { get; set; }
+    public string MobilePhone { get; set; } = string.Empty;
+    public string EmailAddress { get; set; } = string.Empty;
 }
