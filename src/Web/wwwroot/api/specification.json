@@ -38,6 +38,38 @@
         }
       }
     },
+    "/api/Loans/GetLoanById/{id}": {
+      "get": {
+        "tags": [
+          "Loans"
+        ],
+        "operationId": "GetLoanById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfLoanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -435,6 +467,125 @@
             "type": "string"
           }
         }
+      },
+      "ResultOfLoanDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Result"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LoanDto"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "LoanDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "productId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductDto"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LoanStatus"
+          },
+          "term": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CustomerDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "mobilePhone": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "loans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanDto"
+            }
+          }
+        }
+      },
+      "ProductDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "loans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanDto"
+            }
+          }
+        }
+      },
+      "LoanStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Pending",
+          "Processing",
+          "Approved",
+          "Rejected"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",

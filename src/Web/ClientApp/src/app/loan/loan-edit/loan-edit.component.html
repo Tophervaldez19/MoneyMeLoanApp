@@ -1,0 +1,129 @@
+<div id="loan-edit">
+    <div class="loan-edit-container mx-auto p-5 border border-info rounded">
+        <h1 class="text-center">Quote Calculator</h1>
+        <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="term" class="form-label">Term: {{ f.term.value }} Month/s</label>
+                <input type="range" class="form-range" min="1" max="24" id="term" formControlName="term">
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount: {{ f.amount.value | currency:'USD':'symbol':'1.0-0'
+                    }}</label>
+                <input type="range" class="form-range" [min]="loanMinAmount" [max]="loanMaxAmount" id="amount"
+                    step="100" formControlName="amount">
+                <div class="d-flex justify-content-between">
+                    <span>{{ loanMinAmount | currency:'USD':'symbol':'1.0-0'}}</span>
+                    <span>How much do you need?</span>
+                    <span>{{ loanMaxAmount | currency:'USD':'symbol':'1.0-0'}}</span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <div class="row ">
+                    <div class="col-md-2">
+                        <!-- <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" formControlName="title" placeholder=""> -->
+                        <div class="form-floating">
+                            <select class="form-select" id="title" aria-label="Floating label select example"
+                                formControlName="title">
+                                <!-- <option selected value="N/A">N/A</option> -->
+                                <option value="Mr.">Mr.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Miss">Miss</option>
+                                <option value="Dr.">Dr.</option>
+                                <option value="Mx">Mx.</option>
+                            </select>
+                            <label for="title">Title</label>
+                        </div>
+                        <div *ngIf="f.title.errors && f.title.touched">
+                            <small *ngIf="f.title.errors['required']">
+                                Title is required.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+
+                        <div class="form-floating ">
+                            <input type="text" class="form-control" id="firstName" placeholder=""
+                                formControlName="firstName"
+                                [ngClass]="{'border border-danger': f.firstName.errors && f.firstName.touched}">
+                            <label for="firstName">First name</label>
+                        </div>
+                        <div *ngIf="f.firstName.errors && f.firstName.touched">
+                            <small *ngIf="f.firstName.errors['required']" class="text-danger">
+                                First name is required.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-floating ">
+                            <input type="text" class="form-control" id="lastName" placeholder=""
+                                formControlName="lastName"
+                                [ngClass]="{'border border-danger': f.lastName.errors && f.lastName.touched}">
+                            <label for="lastName">Last name</label>
+                        </div>
+                        <div *ngIf="f.lastName.errors && f.lastName.touched">
+                            <small *ngIf="f.lastName.errors['required']" class="text-danger">
+                                Last name is required.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-floating ">
+                            <input type="text" class="form-control" id="emailAddress" placeholder=""
+                                formControlName="emailAddress"
+                                [ngClass]="{'border border-danger': f.emailAddress.errors && f.emailAddress.touched}">
+                            <label for="emailAddress">Your email</label>
+                        </div>
+                        <div *ngIf="f.emailAddress.errors && f.emailAddress.touched">
+                            <small *ngIf="f.emailAddress.errors['required']" class="text-danger">
+                                Email is required.
+                            </small>
+                            <small *ngIf="f.emailAddress.errors['email']" class="text-danger">
+                                Invalid email format.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-floating ">
+                            <input type="text" class="form-control" id="mobilePhone" placeholder=""
+                                formControlName="mobilePhone"
+                                [ngClass]="{'border border-danger': f.mobilePhone.errors && f.mobilePhone.touched}">
+                            <label for="mobilePhone">Mobile number</label>
+                        </div>
+                        <div *ngIf="f.mobilePhone.errors && f.mobilePhone.touched">
+                            <small *ngIf="f.mobilePhone.errors['required']" class="text-danger">
+                                Mobile number is required.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7 mb-3">
+                    <div class="form-floating ">
+                        <input type="date" class="form-control" id="dateOfBirth" placeholder=""
+                            formControlName="dateOfBirth"
+                            [ngClass]="{'border border-danger': f.dateOfBirth.errors && f.dateOfBirth.touched}">
+                        <label for="dateOfBirth">Date of birth</label>
+                        <div *ngIf="f.dateOfBirth.errors && f.dateOfBirth.touched">
+                            <small *ngIf="f.dateOfBirth.errors['required']" class="text-danger">
+                                Date of birth is required.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" [disabled]="loanForm.invalid" class="btn btn-success btn-lg py-2 px-5">Calculate
+                    quote</button>
+                <p class="text-muted fw-light fs-6 mt-3">Quote does not affect your credit score</p>
+            </div>
+
+        </form>
+    </div>
+</div>
