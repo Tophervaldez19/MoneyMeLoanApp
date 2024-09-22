@@ -7,7 +7,7 @@ using MoneyMeLoan.Application.Common.Interfaces;
 using MoneyMeLoan.Application.Common.Models;
 using MoneyMeLoan.Domain.Entities;
 
-namespace MoneyMeLoan.Application.Loans.Commands.CreateDraftLoan;
+namespace MoneyMeLoan.Application.Handlers.Loans.Commands.CreateDraftLoan;
 public class CreateDraftLoanCommand : IRequest<Result<string>>
 {
     public decimal AmountRequired { get; set; }
@@ -25,7 +25,8 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
     private readonly IApplicationDbContext _context = context;
     public async Task<Result<string>> Handle(CreateDraftLoanCommand request, CancellationToken cancellationToken)
     {
-        var customer = await _context.Customers.FirstOrDefaultAsync(x => x.FirstName == request.FirstName && x.LastName == request.LastName && x.DateOfBirth == request.DateOfBirth);
+        var customer = await _context.Customers
+            .FirstOrDefaultAsync(x => x.FirstName == request.FirstName && x.LastName == request.LastName && x.DateOfBirth == request.DateOfBirth);
 
         if (customer == null)
         {
@@ -40,7 +41,18 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
             };
         }
 
-        var loan = new Loan()
+        var loan = await _context.Loans.Where(x => x.Customer.FirstName == request.FirstName && x.Customer.LastName == request.LastName && x.Customer.DateOfBirth == request.DateOfBirth).FirstOrDefaultAsync();
+        if (loan != null)
+        {
+            loan.Term = request.Term;
+            loan.Amount = request.AmountRequired;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Result<string>.Success(loan.Id.ToString());
+        }
+
+        loan = new Loan()
         {
             Customer = customer,
             Amount = request.AmountRequired,
