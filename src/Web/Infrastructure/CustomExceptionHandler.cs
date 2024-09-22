@@ -1,6 +1,7 @@
 ﻿using MoneyMeLoan.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MoneyMeLoan.Application.Common.Models;
 
 namespace MoneyMeLoan.Web.Infrastructure;
 
@@ -37,13 +38,9 @@ public class CustomExceptionHandler : IExceptionHandler
     {
         var exception = (ValidationException)ex;
 
-        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+        httpContext.Response.StatusCode = StatusCodes.Status406NotAcceptable;
 
-        await httpContext.Response.WriteAsJsonAsync(new ValidationProblemDetails(exception.Errors)
-        {
-            Status = StatusCodes.Status400BadRequest,
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-        });
+        await httpContext.Response.WriteAsJsonAsync(Result.ValidationFailure(exception.Errors));
     }
 
     private async Task HandleNotFoundException(HttpContext httpContext, Exception ex)
