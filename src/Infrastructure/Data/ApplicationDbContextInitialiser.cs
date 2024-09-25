@@ -130,6 +130,25 @@ public class ApplicationDbContextInitialiser
             await _context.SaveChangesAsync();
         }
 
+        if (!_context.BlacklistedDomains.Any())
+        {
+            _context.BlacklistedDomains.Add(new BlacklistedDomain
+            {
+                Name = "gmail.com"
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        if (!_context.BlacklistedMobiles.Any())
+        {
+            _context.BlacklistedMobiles.Add(new BlacklistedMobile
+            {
+                MobileNo= "09991234567"
+            });
+
+            await _context.SaveChangesAsync();
+        }
 
     }
 }
