@@ -1,1 +1,39 @@
-<p>loan-confirm works!</p>
+<div id="loan-confirm">
+    <div class="loan-confirm-container mx-auto p-5 border border-info rounded">
+        <h1 class="text-center h1">Your quote</h1>
+        <div class="information">
+            <div class="d-flex justify-content-between">
+                <p class="fs-4">Your information</p>
+                <p class="fw-bold text-info">Edit</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-black-50 mb-2">Name</p>
+                <p class="text-black-50 mb-2">{{ loanDto.customer.firstName }} {{ loanDto.customer.lastName }}</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-black-50 mb-2">Mobile</p>
+                <p class="text-black-50 mb-2">{{ loanDto.customer.mobilePhone }} </p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-black-50 mb-2">Email</p>
+                <p class="text-black-50 mb-2">{{ loanDto.customer.emailAddress }} </p>
+            </div>
+        </div>
+
+        <div class="finance-details mt-3">
+            <div class="d-flex justify-content-between">
+                <p class="fs-4">Finance details</p>
+                <p class="fw-bold text-info">Edit</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fs-5 text-black-50 mb-2">Finance amount</p>
+                <p class="fs-5 fw-bold mb-2 text-info">{{ loanDto.amount | currency:'USD':'symbol':'1.0-0' }} </p>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success btn-lg py-2 px-5">Apply
+                now</button>
+            <p class="text-muted fw-light fs-6 mt-3">Quote does not affect your credit score</p>
+        </div>
+    </div>
+</div>
