@@ -45,6 +45,31 @@ If you encounter the error *"No templates or subcommands found matching: 'ca-use
 dotnet new install Clean.Architecture.Solution.Template::8.0.5
 ```
 
+## Database
+
+When you run the application the database will be automatically created (if necessary) and the latest migrations will be applied.
+
+Running database migrations is easy. Ensure you add the following flags to your command (values assume you are executing from repository root)
+
+- --project src/Infrastructure (optional if in this folder)
+- --startup-project src/Web
+- --output-dir Data/Migrations
+  
+For example, to add a new migration from the root folder:
+
+```bash
+dotnet ef migrations add "InitialMigration" --project src\Infrastructure --startup-project src\Web --output-dir Data\Migrations
+```
+
+## Technologies
+
+- ASP.NET Core 8
+- Entity Framework Core 8
+- MediatR
+- AutoMapper
+- FluentValidation
+- NUnit, FluentAssertions, Moq & Respawn
+
 ## Test
 
 The solution contains unit, integration, functional, and acceptance tests.
