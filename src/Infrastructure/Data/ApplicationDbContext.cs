@@ -18,6 +18,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Loan> Loans => Set<Loan>();
+    public DbSet<BlacklistedDomain> BlacklistedDomains => Set<BlacklistedDomain>();
+    public DbSet<BlacklistedMobile> BlacklistedMobiles => Set<BlacklistedMobile>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
