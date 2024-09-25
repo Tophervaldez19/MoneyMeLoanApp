@@ -83,7 +83,7 @@ public class ApplicationDbContextInitialiser
             await _userManager.CreateAsync(administrator, "Administrator1!");
             if (!string.IsNullOrWhiteSpace(administratorRole.Name))
             {
-                await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
+                await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
             }
         }
 
@@ -105,5 +105,29 @@ public class ApplicationDbContextInitialiser
 
             await _context.SaveChangesAsync();
         }
+
+        //if (!_context.Products.Any())
+        //{
+        //    _context.Products.Add(new Product
+        //    {
+        //        Name = "ProductA"
+        //    });
+
+        //    _context.Products.Add(new Product
+        //    {
+        //        Name = "ProductB",
+        //        InterestFee = 5,
+        //        MonthsInterestFree = 2,
+        //        MinimumMonthsTerm = 6
+        //    });
+
+        //    _context.Products.Add(new Product
+        //    {
+        //        Name = "ProductC",
+        //        InterestFee = 5,
+        //    });
+
+        //    await _context.SaveChangesAsync();
+        //}
     }
 }
