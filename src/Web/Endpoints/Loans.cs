@@ -15,7 +15,7 @@ public class Loans : EndpointGroupBase
             .MapGet(GetLoanById, "GetLoanById/{id}");
     }
 
-    public async Task<Result<string>> CreateDraftLoan(ISender sender, CreateDraftLoanCommand command)
+    public async Task<Result<Guid>> CreateDraftLoan(ISender sender, CreateDraftLoanCommand command)
     {
         return await sender.Send(command);
     }

@@ -8,7 +8,7 @@ using MoneyMeLoan.Application.Common.Models;
 using MoneyMeLoan.Domain.Entities;
 
 namespace MoneyMeLoan.Application.Handlers.Loans.Commands.CreateDraftLoan;
-public class CreateDraftLoanCommand : IRequest<Result<string>>
+public class CreateDraftLoanCommand : IRequest<Result<Guid>>
 {
     public decimal AmountRequired { get; set; }
     public int Term { get; set; }
@@ -20,10 +20,10 @@ public class CreateDraftLoanCommand : IRequest<Result<string>>
     public string EmailAddress { get; set; } = string.Empty;
 }
 
-public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateDraftLoanCommand, Result<string>>
+public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateDraftLoanCommand, Result<Guid>>
 {
     private readonly IApplicationDbContext _context = context;
-    public async Task<Result<string>> Handle(CreateDraftLoanCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateDraftLoanCommand request, CancellationToken cancellationToken)
     {
         var customer = await _context.Customers
             .FirstOrDefaultAsync(x => x.FirstName == request.FirstName && x.LastName == request.LastName && x.DateOfBirth == request.DateOfBirth);
@@ -49,7 +49,7 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<string>.Success(loan.Id.ToString());
+            return Result<Guid>.Success(loan.Id);
         }
 
         loan = new Loan()
@@ -64,6 +64,6 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result<string>.Success(string.Empty);
+        return Result<Guid>.Success(loan.Id);
     }
 }
