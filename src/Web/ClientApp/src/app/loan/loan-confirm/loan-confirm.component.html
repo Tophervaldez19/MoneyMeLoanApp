@@ -4,7 +4,7 @@
         <div class="information">
             <div class="d-flex justify-content-between">
                 <p class="fs-4">Your information</p>
-                <p class="fw-bold text-info">Edit</p>
+                <a class="fw-bold text-info" [routerLink]="['/loan']" [queryParams]="{ id: loanId }">Edit</a>
             </div>
             <div class="d-flex justify-content-between">
                 <p class="text-black-50 mb-2">Name</p>
@@ -23,11 +23,16 @@
         <div class="finance-details mt-3">
             <div class="d-flex justify-content-between">
                 <p class="fs-4">Finance details</p>
-                <p class="fw-bold text-info">Edit</p>
+                <a class="fw-bold text-info" [routerLink]="['/loan']" [queryParams]="{ id: loanId }">Edit</a>
             </div>
             <div class="d-flex justify-content-between">
-                <p class="fs-5 text-black-50 mb-2">Finance amount</p>
-                <p class="fs-5 fw-bold mb-2 text-info">{{ loanDto.amount | currency:'USD':'symbol':'1.0-0' }} </p>
+                <p class="fs-5 text-black-50 mb-0">Finance amount</p>
+                <p class="fs-5 fw-bold mb-0 text-info">{{ loanDto.amount | currency:'USD':'symbol':'1.0-0' }} </p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fs-5 text-black-50 mb-2">
+                    ---------------------------------------------------------------------</p>
+                <p class="mb-2">over {{ loanDto.term }} months </p>
             </div>
         </div>
         <div class="text-center mt-3">

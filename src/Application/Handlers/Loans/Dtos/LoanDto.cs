@@ -10,6 +10,7 @@ using MoneyMeLoan.Domain.Entities;
 namespace MoneyMeLoan.Application.Handlers.Loans.Dtos;
 public class LoanDto
 {
+    public Guid Id { get; set; }
     public decimal Amount { get; set; }
     public Guid CustomerId { get; set; }
     public CustomerDto Customer { get; set; } = default!;

@@ -20,7 +20,6 @@
     <Folder Include="Handlers\Customers\Commands\" />
     <Folder Include="Handlers\Customers\Queries\" />
     <Folder Include="Handlers\Products\Commands\" />
-    <Folder Include="Handlers\Products\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -70,6 +70,58 @@
         }
       }
     },
+    "/api/Loans/UpdateLoan": {
+      "put": {
+        "tags": [
+          "Loans"
+        ],
+        "operationId": "UpdateLoan",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLoanCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfGuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "GetProducts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfListOfProductDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -493,6 +545,10 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
           "amount": {
             "type": "number",
             "format": "decimal"
@@ -556,11 +612,30 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
           "name": {
             "type": "string"
           },
           "description": {
             "type": "string",
+            "nullable": true
+          },
+          "interestFee": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "monthsInterestFree": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minimumMonthsTerm": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "loans": {
@@ -585,6 +660,71 @@
           1,
           2,
           3
+        ]
+      },
+      "UpdateLoanCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "loanId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "term": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "mobilePhone": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          }
+        }
+      },
+      "ResultOfListOfProductDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Result"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/ProductDto"
+                }
+              }
+            }
+          }
         ]
       },
       "PaginatedListOfTodoItemBriefDto": {

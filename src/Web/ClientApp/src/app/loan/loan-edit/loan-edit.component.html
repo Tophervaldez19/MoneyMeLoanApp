@@ -2,9 +2,18 @@
     <div class="loan-edit-container mx-auto p-5 border border-info rounded">
         <h1 class="text-center h1">Quote Calculator</h1>
         <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label for="term" class="form-label">Term: {{ f.term.value }} Month/s</label>
-                <input type="range" class="form-range" min="1" max="24" id="term" formControlName="term">
+            <div class="form-floating mb-3">
+                <select class="form-select" id="productSelect" aria-label="Floating label select Product"
+                    formControlName="productId"
+                    [ngClass]="{'border border-danger': f.productId.errors && f.productId.touched}">
+                    <option *ngFor="let product of productDtos" [value]="product.id">{{ product.name }}</option>
+                </select>
+                <label for="productSelect">Product</label>
+                <div *ngIf="f.productId.errors && f.productId.touched">
+                    <small *ngIf="f.productId.errors['required']" class="text-danger">
+                        Product is required.
+                    </small>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount: {{ f.amount.value | currency:'USD':'symbol':'1.0-0'
@@ -15,6 +24,16 @@
                     <span>{{ loanMinAmount | currency:'USD':'symbol':'1.0-0'}}</span>
                     <span>How much do you need?</span>
                     <span>{{ loanMaxAmount | currency:'USD':'symbol':'1.0-0'}}</span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="term" class="form-label">Term: {{ f.term.value }} Month/s</label>
+                <input type="range" class="form-range" min="1" max="24" id="term" formControlName="term">
+                <!-- Error message for Validators.min -->
+                <div *ngIf="f.term.errors?.['min'] && f.term.touched">
+                    <small class="text-danger">
+                        Term must be at least {{ loanForm.get('term')?.errors?.['min']?.min }} months.
+                    </small>
                 </div>
             </div>
             <div class="form-group mb-3">
@@ -36,7 +55,7 @@
                             <label for="title">Title</label>
                         </div>
                         <div *ngIf="f.title.errors && f.title.touched">
-                            <small *ngIf="f.title.errors['required']">
+                            <small *ngIf="f.title.errors['required']" class="text-danger">
                                 Title is required.
                             </small>
                         </div>

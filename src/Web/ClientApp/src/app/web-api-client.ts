@@ -18,6 +18,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 export interface ILoansClient {
     createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfGuid>;
     getLoanById(id: string): Observable<ResultOfLoanDto>;
+    updateLoan(command: UpdateLoanCommand): Observable<ResultOfGuid>;
 }
 
 @Injectable({
@@ -126,6 +127,124 @@ export class LoansClient implements ILoansClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ResultOfLoanDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateLoan(command: UpdateLoanCommand): Observable<ResultOfGuid> {
+        let url_ = this.baseUrl + "/api/Loans/UpdateLoan";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLoan(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLoan(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGuid>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGuid>;
+        }));
+    }
+
+    protected processUpdateLoan(response: HttpResponseBase): Observable<ResultOfGuid> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfGuid.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+export interface IProductsClient {
+    getProducts(): Observable<ResultOfListOfProductDto>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ProductsClient implements IProductsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getProducts(): Observable<ResultOfListOfProductDto> {
+        let url_ = this.baseUrl + "/api/Products";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProducts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProducts(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfListOfProductDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfListOfProductDto>;
+        }));
+    }
+
+    protected processGetProducts(response: HttpResponseBase): Observable<ResultOfListOfProductDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfListOfProductDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -917,6 +1036,7 @@ export interface IResultOfLoanDto extends IResult {
 }
 
 export class LoanDto implements ILoanDto {
+    id?: string;
     amount?: number;
     customerId?: string;
     customer?: CustomerDto;
@@ -936,6 +1056,7 @@ export class LoanDto implements ILoanDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.amount = _data["amount"];
             this.customerId = _data["customerId"];
             this.customer = _data["customer"] ? CustomerDto.fromJS(_data["customer"]) : <any>undefined;
@@ -955,6 +1076,7 @@ export class LoanDto implements ILoanDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["amount"] = this.amount;
         data["customerId"] = this.customerId;
         data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
@@ -967,6 +1089,7 @@ export class LoanDto implements ILoanDto {
 }
 
 export interface ILoanDto {
+    id?: string;
     amount?: number;
     customerId?: string;
     customer?: CustomerDto;
@@ -1045,8 +1168,12 @@ export interface ICustomerDto {
 }
 
 export class ProductDto implements IProductDto {
+    id?: string;
     name?: string;
     description?: string | undefined;
+    interestFee?: number | undefined;
+    monthsInterestFree?: number | undefined;
+    minimumMonthsTerm?: number | undefined;
     loans?: LoanDto[];
 
     constructor(data?: IProductDto) {
@@ -1060,8 +1187,12 @@ export class ProductDto implements IProductDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.name = _data["name"];
             this.description = _data["description"];
+            this.interestFee = _data["interestFee"];
+            this.monthsInterestFree = _data["monthsInterestFree"];
+            this.minimumMonthsTerm = _data["minimumMonthsTerm"];
             if (Array.isArray(_data["loans"])) {
                 this.loans = [] as any;
                 for (let item of _data["loans"])
@@ -1079,8 +1210,12 @@ export class ProductDto implements IProductDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
+        data["interestFee"] = this.interestFee;
+        data["monthsInterestFree"] = this.monthsInterestFree;
+        data["minimumMonthsTerm"] = this.minimumMonthsTerm;
         if (Array.isArray(this.loans)) {
             data["loans"] = [];
             for (let item of this.loans)
@@ -1091,8 +1226,12 @@ export class ProductDto implements IProductDto {
 }
 
 export interface IProductDto {
+    id?: string;
     name?: string;
     description?: string | undefined;
+    interestFee?: number | undefined;
+    monthsInterestFree?: number | undefined;
+    minimumMonthsTerm?: number | undefined;
     loans?: LoanDto[];
 }
 
@@ -1101,6 +1240,123 @@ export enum LoanStatus {
     Processing = 1,
     Approved = 2,
     Rejected = 3,
+}
+
+export class UpdateLoanCommand implements IUpdateLoanCommand {
+    loanId?: string;
+    amount?: number;
+    term?: number;
+    productId?: string;
+    customerId?: string;
+    title?: string;
+    firstName?: string;
+    lastName?: string;
+    dateOfBirth?: Date;
+    mobilePhone?: string;
+    emailAddress?: string;
+
+    constructor(data?: IUpdateLoanCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.loanId = _data["loanId"];
+            this.amount = _data["amount"];
+            this.term = _data["term"];
+            this.productId = _data["productId"];
+            this.customerId = _data["customerId"];
+            this.title = _data["title"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.mobilePhone = _data["mobilePhone"];
+            this.emailAddress = _data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLoanCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLoanCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["loanId"] = this.loanId;
+        data["amount"] = this.amount;
+        data["term"] = this.term;
+        data["productId"] = this.productId;
+        data["customerId"] = this.customerId;
+        data["title"] = this.title;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["dateOfBirth"] = this.dateOfBirth ? formatDate(this.dateOfBirth) : <any>undefined;
+        data["mobilePhone"] = this.mobilePhone;
+        data["emailAddress"] = this.emailAddress;
+        return data;
+    }
+}
+
+export interface IUpdateLoanCommand {
+    loanId?: string;
+    amount?: number;
+    term?: number;
+    productId?: string;
+    customerId?: string;
+    title?: string;
+    firstName?: string;
+    lastName?: string;
+    dateOfBirth?: Date;
+    mobilePhone?: string;
+    emailAddress?: string;
+}
+
+export class ResultOfListOfProductDto extends Result implements IResultOfListOfProductDto {
+    data?: ProductDto[] | undefined;
+
+    constructor(data?: IResultOfListOfProductDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(ProductDto.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): ResultOfListOfProductDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfListOfProductDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IResultOfListOfProductDto extends IResult {
+    data?: ProductDto[] | undefined;
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {
