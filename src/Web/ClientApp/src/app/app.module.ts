@@ -15,6 +15,7 @@ import { TodoComponent } from './todo/todo.component';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';
+import { LoanConfirmComponent } from './loan/loan-confirm/loan-confirm.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';
     CounterComponent,
     FetchDataComponent,
     TodoComponent,
-    LoanEditComponent
+    LoanEditComponent,
+    LoanConfirmComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -36,7 +38,8 @@ import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'todo', component: TodoComponent },
-      { path: 'loan', component: LoanEditComponent }
+      { path: 'loan', component: LoanEditComponent },
+      { path: 'loan/confirm', component: LoanConfirmComponent }
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot()

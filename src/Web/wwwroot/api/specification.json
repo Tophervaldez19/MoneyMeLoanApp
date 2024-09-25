@@ -30,7 +30,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultOfString"
+                  "$ref": "#/components/schemas/ResultOfGuid"
                 }
               }
             }
@@ -387,7 +387,7 @@
   },
   "components": {
     "schemas": {
-      "ResultOfString": {
+      "ResultOfGuid": {
         "allOf": [
           {
             "$ref": "#/components/schemas/Result"
@@ -398,7 +398,7 @@
             "properties": {
               "data": {
                 "type": "string",
-                "nullable": true
+                "format": "guid"
               }
             }
           }

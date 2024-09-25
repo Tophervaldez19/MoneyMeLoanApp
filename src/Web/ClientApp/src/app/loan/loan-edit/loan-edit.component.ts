@@ -59,7 +59,8 @@ export class LoanEditComponent implements OnInit {
       lastName: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
       mobilePhone: ['', Validators.required],
-      emailAddress: ['', [Validators.required, Validators.email]]
+      emailAddress: ['', [Validators.required, Validators.email]],
+      customerId: ['']
     });
   }
 
@@ -72,7 +73,8 @@ export class LoanEditComponent implements OnInit {
       lastName: this.loanDto.customer.lastName,
       dateOfBirth: this.loanDto.customer.dateOfBirth.toISOString().substring(0, 10),
       mobilePhone: this.loanDto.customer.mobilePhone,
-      emailAddress: this.loanDto.customer.emailAddress
+      emailAddress: this.loanDto.customer.emailAddress,
+      customerId: this.loanDto.customerId
     });
 
     Object.keys(this.loanForm.controls).forEach(field => {

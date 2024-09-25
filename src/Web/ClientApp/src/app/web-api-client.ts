@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface ILoansClient {
-    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfString>;
+    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfGuid>;
     getLoanById(id: string): Observable<ResultOfLoanDto>;
 }
 
@@ -33,7 +33,7 @@ export class LoansClient implements ILoansClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfString> {
+    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfGuid> {
         let url_ = this.baseUrl + "/api/Loans/CreateDraftLoan";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -56,14 +56,14 @@ export class LoansClient implements ILoansClient {
                 try {
                     return this.processCreateDraftLoan(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfString>;
+                    return _observableThrow(e) as any as Observable<ResultOfGuid>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfString>;
+                return _observableThrow(response_) as any as Observable<ResultOfGuid>;
         }));
     }
 
-    protected processCreateDraftLoan(response: HttpResponseBase): Observable<ResultOfString> {
+    protected processCreateDraftLoan(response: HttpResponseBase): Observable<ResultOfGuid> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -74,7 +74,7 @@ export class LoansClient implements ILoansClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ResultOfString.fromJS(resultData200);
+            result200 = ResultOfGuid.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -786,10 +786,10 @@ export interface IResult {
     validationErrors?: { [key: string]: string[]; } | undefined;
 }
 
-export class ResultOfString extends Result implements IResultOfString {
-    data?: string | undefined;
+export class ResultOfGuid extends Result implements IResultOfGuid {
+    data?: string;
 
-    constructor(data?: IResultOfString) {
+    constructor(data?: IResultOfGuid) {
         super(data);
     }
 
@@ -800,9 +800,9 @@ export class ResultOfString extends Result implements IResultOfString {
         }
     }
 
-    static override fromJS(data: any): ResultOfString {
+    static override fromJS(data: any): ResultOfGuid {
         data = typeof data === 'object' ? data : {};
-        let result = new ResultOfString();
+        let result = new ResultOfGuid();
         result.init(data);
         return result;
     }
@@ -815,8 +815,8 @@ export class ResultOfString extends Result implements IResultOfString {
     }
 }
 
-export interface IResultOfString extends IResult {
-    data?: string | undefined;
+export interface IResultOfGuid extends IResult {
+    data?: string;
 }
 
 export class CreateDraftLoanCommand implements ICreateDraftLoanCommand {
