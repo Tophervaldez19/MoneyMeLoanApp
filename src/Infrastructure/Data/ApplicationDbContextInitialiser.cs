@@ -110,7 +110,9 @@ public class ApplicationDbContextInitialiser
         {
             _context.Products.Add(new Product
             {
-                Name = "ProductA"
+                Name = "ProductA",
+                InterestFee = 0,
+                EstablishmentFee = 200
             });
 
             _context.Products.Add(new Product
@@ -118,13 +120,15 @@ public class ApplicationDbContextInitialiser
                 Name = "ProductB",
                 InterestFee = 5,
                 MonthsInterestFree = 2,
-                MinimumMonthsTerm = 6
+                MinimumMonthsTerm = 6,
+                EstablishmentFee = 300
             });
 
             _context.Products.Add(new Product
             {
                 Name = "ProductC",
                 InterestFee = 5,
+                EstablishmentFee = 400
             });
 
             await _context.SaveChangesAsync();
@@ -144,7 +148,7 @@ public class ApplicationDbContextInitialiser
         {
             _context.BlacklistedMobiles.Add(new BlacklistedMobile
             {
-                MobileNo= "09991234567"
+                MobileNo = "09991234567"
             });
 
             await _context.SaveChangesAsync();

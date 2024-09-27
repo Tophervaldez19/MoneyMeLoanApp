@@ -13,5 +13,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.Property(x => x.InterestFee).HasPrecision(38, 4);
+        builder.Property(x => x.EstablishmentFee).HasPrecision(38, 4);
     }
 }
