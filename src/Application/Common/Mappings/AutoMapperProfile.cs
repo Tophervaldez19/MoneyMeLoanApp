@@ -20,7 +20,8 @@ public class AutoMapperProfile : Profile
         CreateMap<Product, ProductDto>().ReverseMap();
 
         //Loan
-        CreateMap<Loan,LoanDto>().ReverseMap();
+        CreateMap<Loan, LoanDto>().ReverseMap();
+        CreateMap<Loan, ConfirmLoanDto>().ReverseMap();
 
     }
 }

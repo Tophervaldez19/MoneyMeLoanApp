@@ -12,5 +12,6 @@ public class Product : BaseAuditableEntity
     public decimal? InterestFee { get; set; }
     public int? MonthsInterestFree { get; set; }
     public int? MinimumMonthsTerm { get; set; }
+    public decimal EstablishmentFee { get; set; }
     public IList<Loan> Loans { get; private set; } = new List<Loan>();
 }
