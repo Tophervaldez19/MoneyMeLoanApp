@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LoanDto, LoansClient } from 'src/app/web-api-client';
+import { ConfirmLoanDto, LoanDto, LoansClient, LoanStatus } from 'src/app/web-api-client';
 
 @Component({
   selector: 'app-loan-confirm',
@@ -8,10 +8,10 @@ import { LoanDto, LoansClient } from 'src/app/web-api-client';
   styleUrls: ['./loan-confirm.component.css']
 })
 export class LoanConfirmComponent implements OnInit {
-
+  LoanStatus = LoanStatus;
   loanId: string = "";
-  loanDto: LoanDto;
-
+  loanDto: ConfirmLoanDto;
+  errors: string[] = [];
   constructor(
     private activatedRoute: ActivatedRoute,
     private loansClient: LoansClient
@@ -20,17 +20,33 @@ export class LoanConfirmComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.loanId = params['id'];
-      console.log(this.loanId + " loan Id");
     });
 
     if (this.loanId != "") {
-      this.loansClient.getLoanById(this.loanId).subscribe(
+      this.loansClient.getLoanConfirmById(this.loanId).subscribe(
         result => {
           this.loanDto = result.data;
+          this.loanDto.status
           console.log(this.loanDto);
         },
         error => console.error(error)
       );
     }
+  }
+
+  onSubmit(): void {
+    this.loansClient.confirmLoan(this.loanId).subscribe(result => {
+      if (result.succeeded) {
+        window.location.reload();
+      }
+
+      if (result.errors) {
+        this.errors = result.errors
+      }
+    }, error => console.error(error));
+  }
+
+  isSubmitButtonDisabled(): boolean {
+    return this.loanDto.status == LoanStatus.Processing;
   }
 }

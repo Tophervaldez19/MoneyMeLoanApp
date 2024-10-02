@@ -14,5 +14,6 @@ public class ProductDto
     public decimal? InterestFee { get; set; }
     public int? MonthsInterestFree { get; set; }
     public int? MinimumMonthsTerm { get; set; }
+    public decimal EstablishmentFee { get; set; }
     public IList<LoanDto> Loans { get; private set; } = new List<LoanDto>();
 }

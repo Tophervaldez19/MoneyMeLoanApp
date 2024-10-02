@@ -30,7 +30,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultOfGuid"
+                  "$ref": "#/components/schemas/ResultOfString"
                 }
               }
             }
@@ -70,6 +70,38 @@
         }
       }
     },
+    "/api/Loans/GetLoanConfirmById/{id}": {
+      "get": {
+        "tags": [
+          "Loans"
+        ],
+        "operationId": "GetLoanConfirmById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfConfirmLoanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Loans/UpdateLoan": {
       "put": {
         "tags": [
@@ -95,6 +127,38 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ResultOfGuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Loans/ConfirmLoan": {
+      "post": {
+        "tags": [
+          "Loans"
+        ],
+        "operationId": "ConfirmLoan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
                 }
               }
             }
@@ -439,7 +503,7 @@
   },
   "components": {
     "schemas": {
-      "ResultOfGuid": {
+      "ResultOfString": {
         "allOf": [
           {
             "$ref": "#/components/schemas/Result"
@@ -450,7 +514,7 @@
             "properties": {
               "data": {
                 "type": "string",
-                "format": "guid"
+                "nullable": true
               }
             }
           }
@@ -638,6 +702,10 @@
             "format": "int32",
             "nullable": true
           },
+          "establishmentFee": {
+            "type": "number",
+            "format": "decimal"
+          },
           "loans": {
             "type": "array",
             "items": {
@@ -660,6 +728,73 @@
           1,
           2,
           3
+        ]
+      },
+      "ResultOfConfirmLoanDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Result"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ConfirmLoanDto"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ConfirmLoanDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoanDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "monthlyPayment": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "interestFreePayment": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "totalInterest": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "totalRepayment": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "ResultOfGuid": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Result"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "type": "string",
+                "format": "guid"
+              }
+            }
+          }
         ]
       },
       "UpdateLoanCommand": {

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using MoneyMeLoan.Application.Common.Interfaces;
 using MoneyMeLoan.Application.Common.Models;
 using MoneyMeLoan.Domain.Entities;
 
 namespace MoneyMeLoan.Application.Handlers.Loans.Commands.CreateDraftLoan;
-public class CreateDraftLoanCommand : IRequest<Result<Guid>>
+public class CreateDraftLoanCommand : IRequest<Result<string>>
 {
     public decimal AmountRequired { get; set; }
     public int Term { get; set; }
@@ -20,11 +16,14 @@ public class CreateDraftLoanCommand : IRequest<Result<Guid>>
     public string EmailAddress { get; set; } = string.Empty;
 }
 
-public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateDraftLoanCommand, Result<Guid>>
+public class CreateDraftLoanCommandHandler(IApplicationDbContext context, IHttpContextAccessor httpContextAccessor) : IRequestHandler<CreateDraftLoanCommand, Result<string>>
 {
     private readonly IApplicationDbContext _context = context;
-    public async Task<Result<Guid>> Handle(CreateDraftLoanCommand request, CancellationToken cancellationToken)
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    public async Task<Result<string>> Handle(CreateDraftLoanCommand request, CancellationToken cancellationToken)
     {
+        var baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
+
         var customer = await _context.Customers
             .FirstOrDefaultAsync(x => x.FirstName == request.FirstName && x.LastName == request.LastName && x.DateOfBirth == request.DateOfBirth);
 
@@ -49,7 +48,7 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<Guid>.Success(loan.Id);
+            return Result<string>.Success($"{baseUrl}/loan?id={loan.Id}");
         }
 
         loan = new Loan()
@@ -64,6 +63,7 @@ public class CreateDraftLoanCommandHandler(IApplicationDbContext context) : IReq
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result<Guid>.Success(loan.Id);
+
+        return Result<string>.Success($"{baseUrl}/loan?id={loan.Id}");
     }
 }

@@ -1,6 +1,9 @@
 <div id="loan-confirm">
     <div class="loan-confirm-container mx-auto p-5 border border-info rounded">
         <h1 class="text-center h1">Your quote</h1>
+        <h4 *ngIf="loanDto?.status === LoanStatus.Processing" class="text-center text-success h4">Quote Status is
+            processing and
+            subject for approval.</h4>
         <div class="information">
             <div class="d-flex justify-content-between">
                 <p class="fs-4">Your information</p>
@@ -8,15 +11,22 @@
             </div>
             <div class="d-flex justify-content-between">
                 <p class="text-black-50 mb-2">Name</p>
-                <p class="text-black-50 mb-2">{{ loanDto.customer.firstName }} {{ loanDto.customer.lastName }}</p>
+                <p class="text-black-50 mb-2">{{ loanDto?.customer?.firstName }} {{ loanDto?.customer?.lastName }}</p>
             </div>
             <div class="d-flex justify-content-between">
                 <p class="text-black-50 mb-2">Mobile</p>
-                <p class="text-black-50 mb-2">{{ loanDto.customer.mobilePhone }} </p>
+                <p class="text-black-50 mb-2">{{ loanDto?.customer?.mobilePhone }} </p>
             </div>
             <div class="d-flex justify-content-between">
                 <p class="text-black-50 mb-2">Email</p>
-                <p class="text-black-50 mb-2">{{ loanDto.customer.emailAddress }} </p>
+                <p class="text-black-50 mb-2">{{ loanDto?.customer?.emailAddress }} </p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="text-black-50 mb-2">Status</p>
+                <p class="mb-2" [ngClass]="{
+                    'text-success fw-bold': loanDto?.status === LoanStatus.Processing,
+                    'text-black-50': loanDto?.status !== LoanStatus.Processing
+                }">{{ LoanStatus[loanDto?.status] }} </p>
             </div>
         </div>
 
@@ -27,18 +37,54 @@
             </div>
             <div class="d-flex justify-content-between">
                 <p class="fs-5 text-black-50 mb-0">Finance amount</p>
-                <p class="fs-5 fw-bold mb-0 text-info">{{ loanDto.amount | currency:'USD':'symbol':'1.0-0' }} </p>
+                <p class="fs-5 fw-bold mb-0 text-info">{{ loanDto?.amount | currency:'USD':'symbol':'1.0-0' }} </p>
             </div>
             <div class="d-flex justify-content-between">
                 <p class="fs-5 text-black-50 mb-2">
                     ---------------------------------------------------------------------</p>
-                <p class="mb-2">over {{ loanDto.term }} months </p>
+                <p class="mb-2">over {{ loanDto?.term }} months </p>
+            </div>
+            <div *ngIf="loanDto?.product?.monthsInterestFree">
+                <div class="d-flex justify-content-between">
+                    <p class="fs-5 text-black-50 mb-0">Repayments from (First {{ loanDto?.product?.monthsInterestFree }}
+                        Month/s)</p>
+                    <p class="fs-5 fw-bold mb-0 text-info">{{ loanDto?.interestFreePayment |
+                        currency:'USD':'symbol':'1.2-2'
+                        }}
+                    </p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <p class="fs-5 text-black-50 mb-2">
+                        ---------------------------------------------------------------------------
+                    </p>
+                    <p class="mb-2">Monthly </p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fs-5 text-black-50 mb-0">Repayments from</p>
+                <p class="fs-5 fw-bold mb-0 text-info">{{ loanDto?.monthlyPayment | currency:'USD':'symbol':'1.2-2' }}
+                </p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fs-5 text-black-50 mb-2">
+                    ---------------------------------------------------------------------------
+                </p>
+                <p class="mb-2">Monthly </p>
             </div>
         </div>
         <div class="text-center mt-3">
-            <button type="submit" class="btn btn-success btn-lg py-2 px-5">Apply
+            <button type="button" [disabled]="isSubmitButtonDisabled()" (click)="onSubmit()"
+                class="btn btn-success btn-lg py-2 px-5">Apply
                 now</button>
-            <p class="text-muted fw-light fs-6 mt-3">Quote does not affect your credit score</p>
+            <div *ngIf="errors.length > 0" class="text-danger mt-3">
+                <small class="d-block" *ngFor="let error of errors">{{ error }}</small>
+            </div>
+            <p class="text-muted fw-light fs-6 mt-3 mx-5">Total repayments {{ loanDto?.totalRepayment |
+                currency:'USD':'symbol':'1.2-2' }}, made up of an establishment fee of {{
+                loanDto?.product?.establishmentFee | currency:'USD':'symbol':'1.2-2' }}, Interest of {{
+                loanDto?.totalInterest | currency:'USD':'symbol':'1.2-2' }}. The repayment amount is based on the
+                variables selected, is subject to our assessment and suitability, and other important terms and
+                conditions apply</p>
         </div>
     </div>
 </div>

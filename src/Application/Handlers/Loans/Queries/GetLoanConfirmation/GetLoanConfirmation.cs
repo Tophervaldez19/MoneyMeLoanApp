@@ -34,6 +34,7 @@ public class GetLoanConfirmationQueryHandler(IApplicationDbContext context, IMap
         dto.MonthlyPayment = pmtResult.MonthlyPayment;
         dto.InterestFreePayment = pmtResult.MonthlyPaymentInterestFree;
         dto.TotalInterest = pmtResult.TotalInterest;
+        dto.TotalRepayment = pmtResult.TotalRepayment;
 
         return Result<ConfirmLoanDto>.Success(dto);
     }

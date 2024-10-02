@@ -10,4 +10,5 @@ public class ConfirmLoanDto : LoanDto
     public decimal MonthlyPayment { get; set; }
     public decimal InterestFreePayment { get; set; }
     public decimal TotalInterest { get; set; }
+    public decimal TotalRepayment { get; set; }
 }

@@ -16,9 +16,11 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface ILoansClient {
-    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfGuid>;
+    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfString>;
     getLoanById(id: string): Observable<ResultOfLoanDto>;
+    getLoanConfirmById(id: string): Observable<ResultOfConfirmLoanDto>;
     updateLoan(command: UpdateLoanCommand): Observable<ResultOfGuid>;
+    confirmLoan(id: string): Observable<Result>;
 }
 
 @Injectable({
@@ -34,7 +36,7 @@ export class LoansClient implements ILoansClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfGuid> {
+    createDraftLoan(command: CreateDraftLoanCommand): Observable<ResultOfString> {
         let url_ = this.baseUrl + "/api/Loans/CreateDraftLoan";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -57,14 +59,14 @@ export class LoansClient implements ILoansClient {
                 try {
                     return this.processCreateDraftLoan(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfGuid>;
+                    return _observableThrow(e) as any as Observable<ResultOfString>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfGuid>;
+                return _observableThrow(response_) as any as Observable<ResultOfString>;
         }));
     }
 
-    protected processCreateDraftLoan(response: HttpResponseBase): Observable<ResultOfGuid> {
+    protected processCreateDraftLoan(response: HttpResponseBase): Observable<ResultOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -75,7 +77,7 @@ export class LoansClient implements ILoansClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ResultOfGuid.fromJS(resultData200);
+            result200 = ResultOfString.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -137,6 +139,57 @@ export class LoansClient implements ILoansClient {
         return _observableOf(null as any);
     }
 
+    getLoanConfirmById(id: string): Observable<ResultOfConfirmLoanDto> {
+        let url_ = this.baseUrl + "/api/Loans/GetLoanConfirmById/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLoanConfirmById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLoanConfirmById(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfConfirmLoanDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfConfirmLoanDto>;
+        }));
+    }
+
+    protected processGetLoanConfirmById(response: HttpResponseBase): Observable<ResultOfConfirmLoanDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfConfirmLoanDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     updateLoan(command: UpdateLoanCommand): Observable<ResultOfGuid> {
         let url_ = this.baseUrl + "/api/Loans/UpdateLoan";
         url_ = url_.replace(/[?&]$/, "");
@@ -179,6 +232,58 @@ export class LoansClient implements ILoansClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ResultOfGuid.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    confirmLoan(id: string): Observable<Result> {
+        let url_ = this.baseUrl + "/api/Loans/ConfirmLoan?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processConfirmLoan(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processConfirmLoan(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<Result>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<Result>;
+        }));
+    }
+
+    protected processConfirmLoan(response: HttpResponseBase): Observable<Result> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Result.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -905,10 +1010,10 @@ export interface IResult {
     validationErrors?: { [key: string]: string[]; } | undefined;
 }
 
-export class ResultOfGuid extends Result implements IResultOfGuid {
-    data?: string;
+export class ResultOfString extends Result implements IResultOfString {
+    data?: string | undefined;
 
-    constructor(data?: IResultOfGuid) {
+    constructor(data?: IResultOfString) {
         super(data);
     }
 
@@ -919,9 +1024,9 @@ export class ResultOfGuid extends Result implements IResultOfGuid {
         }
     }
 
-    static override fromJS(data: any): ResultOfGuid {
+    static override fromJS(data: any): ResultOfString {
         data = typeof data === 'object' ? data : {};
-        let result = new ResultOfGuid();
+        let result = new ResultOfString();
         result.init(data);
         return result;
     }
@@ -934,8 +1039,8 @@ export class ResultOfGuid extends Result implements IResultOfGuid {
     }
 }
 
-export interface IResultOfGuid extends IResult {
-    data?: string;
+export interface IResultOfString extends IResult {
+    data?: string | undefined;
 }
 
 export class CreateDraftLoanCommand implements ICreateDraftLoanCommand {
@@ -1174,6 +1279,7 @@ export class ProductDto implements IProductDto {
     interestFee?: number | undefined;
     monthsInterestFree?: number | undefined;
     minimumMonthsTerm?: number | undefined;
+    establishmentFee?: number;
     loans?: LoanDto[];
 
     constructor(data?: IProductDto) {
@@ -1193,6 +1299,7 @@ export class ProductDto implements IProductDto {
             this.interestFee = _data["interestFee"];
             this.monthsInterestFree = _data["monthsInterestFree"];
             this.minimumMonthsTerm = _data["minimumMonthsTerm"];
+            this.establishmentFee = _data["establishmentFee"];
             if (Array.isArray(_data["loans"])) {
                 this.loans = [] as any;
                 for (let item of _data["loans"])
@@ -1216,6 +1323,7 @@ export class ProductDto implements IProductDto {
         data["interestFee"] = this.interestFee;
         data["monthsInterestFree"] = this.monthsInterestFree;
         data["minimumMonthsTerm"] = this.minimumMonthsTerm;
+        data["establishmentFee"] = this.establishmentFee;
         if (Array.isArray(this.loans)) {
             data["loans"] = [];
             for (let item of this.loans)
@@ -1232,6 +1340,7 @@ export interface IProductDto {
     interestFee?: number | undefined;
     monthsInterestFree?: number | undefined;
     minimumMonthsTerm?: number | undefined;
+    establishmentFee?: number;
     loans?: LoanDto[];
 }
 
@@ -1240,6 +1349,117 @@ export enum LoanStatus {
     Processing = 1,
     Approved = 2,
     Rejected = 3,
+}
+
+export class ResultOfConfirmLoanDto extends Result implements IResultOfConfirmLoanDto {
+    data?: ConfirmLoanDto | undefined;
+
+    constructor(data?: IResultOfConfirmLoanDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.data = _data["data"] ? ConfirmLoanDto.fromJS(_data["data"]) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): ResultOfConfirmLoanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfConfirmLoanDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IResultOfConfirmLoanDto extends IResult {
+    data?: ConfirmLoanDto | undefined;
+}
+
+export class ConfirmLoanDto extends LoanDto implements IConfirmLoanDto {
+    monthlyPayment?: number;
+    interestFreePayment?: number;
+    totalInterest?: number;
+    totalRepayment?: number;
+
+    constructor(data?: IConfirmLoanDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.monthlyPayment = _data["monthlyPayment"];
+            this.interestFreePayment = _data["interestFreePayment"];
+            this.totalInterest = _data["totalInterest"];
+            this.totalRepayment = _data["totalRepayment"];
+        }
+    }
+
+    static override fromJS(data: any): ConfirmLoanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConfirmLoanDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["monthlyPayment"] = this.monthlyPayment;
+        data["interestFreePayment"] = this.interestFreePayment;
+        data["totalInterest"] = this.totalInterest;
+        data["totalRepayment"] = this.totalRepayment;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IConfirmLoanDto extends ILoanDto {
+    monthlyPayment?: number;
+    interestFreePayment?: number;
+    totalInterest?: number;
+    totalRepayment?: number;
+}
+
+export class ResultOfGuid extends Result implements IResultOfGuid {
+    data?: string;
+
+    constructor(data?: IResultOfGuid) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.data = _data["data"];
+        }
+    }
+
+    static override fromJS(data: any): ResultOfGuid {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfGuid();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IResultOfGuid extends IResult {
+    data?: string;
 }
 
 export class UpdateLoanCommand implements IUpdateLoanCommand {
