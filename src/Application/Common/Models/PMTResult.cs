@@ -10,5 +10,6 @@ public class PMTResult
     public decimal MonthlyPayment { get; set; }
     public decimal MonthlyPaymentInterestFree { get; set; }
     public decimal TotalInterest { get; set; }
+    public decimal TotalRepayment { get; set; }
 
 }

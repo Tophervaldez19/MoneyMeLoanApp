@@ -21,8 +21,16 @@ public class PMTCalculator : IPMTCalculator
 
         // Calculate the monthly payment for the remaining 22 months using the loan amortization formula
         int remainingMonths = loan.Term - (loan.Product.MonthsInterestFree ?? 0);
-        double monthlyPaymentWithInterest = (double)remainingPrincipal * (double)monthlyInterestRate * Math.Pow(1 + (double)monthlyInterestRate, remainingMonths)
+        double monthlyPaymentWithInterest;
+        if (monthlyInterestRate == 0)
+        {
+            monthlyPaymentWithInterest = (double)(loan.Amount / loan.Term);
+        }
+        else
+        {
+            monthlyPaymentWithInterest = (double)remainingPrincipal * (double)monthlyInterestRate * Math.Pow(1 + (double)monthlyInterestRate, remainingMonths)
                               / (Math.Pow(1 + (double)monthlyInterestRate, remainingMonths) - 1);
+        }
 
         decimal monthlyPaymentFromEstablishmentFee = loan.Product.EstablishmentFee / loan.Term;
 
@@ -39,8 +47,9 @@ public class PMTCalculator : IPMTCalculator
         var result = new PMTResult()
         {
             MonthlyPayment = (decimal)monthlyPaymentWithInterest + monthlyPaymentFromEstablishmentFee,
-            MonthlyPaymentInterestFree = interestFreePayment,
-            TotalInterest = totalInterest
+            MonthlyPaymentInterestFree = interestFreePayment + monthlyPaymentFromEstablishmentFee,
+            TotalInterest = totalInterest,
+            TotalRepayment = totalPayments + loan.Product.EstablishmentFee
         };
 
         return result;
